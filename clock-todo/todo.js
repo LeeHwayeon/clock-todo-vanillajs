@@ -7,19 +7,13 @@
 
 const toDoForm = document.querySelector('.form');
 const toDoInput = toDoForm.querySelector('input');
-const toDoList = document.querySelector('.todo-ul')
+const toDoList = document.querySelector('.todo-ul');
 
 const TODOLIST = 'toDoList';
+
 //배열을 사용하지 않고 그냥 todo를 계속 추가한다면 기존의 todo는 없어지고 새로운 todo만 남는다.
 //따라서 배열형태로 리스트를 만들어 배열을 저장해준다.
 let toDoListArray = [];
-
-function init(){
-  loadToDoList();
-  toDoForm.addEventListener('submit', createToDo);
-}
-
-init();
 
 //입력한 input 값을 받아오는 함수
 function createToDo(e){
@@ -35,9 +29,24 @@ function createToDo(e){
 function paintToDo(toDoInputValue){
   const li = document.createElement('li');
   const span = document.createElement('span');
+  const delButton = document.createElement('button');
+  delButton.innerText = 'X';
+  delButton.addEventListener('click', deleteToDo);
   span.innerHTML = toDoInputValue;
   li.appendChild(span);
+  li.appendChild(delButton);
+  li.id = toDoListArray.length+1;
   toDoList.append(li);
+}
+
+function deleteToDo(e){
+  const { target: button } = e;
+  const li = button.parentNode;
+  console.log(li);
+  toDoList.removeChild(li);
+  toDoListArray = toDoListArray.filter((toDo) => toDo.id !== Number(li.id));
+  console.log(toDoListArray);
+  localStorage.setItem(TODOLIST, JSON.stringify(toDoListArray));
 }
 
 function loadToDoList(){
@@ -60,5 +69,10 @@ function saveToDoList(toDoInputValue){
   localStorage.setItem(TODOLIST, JSON.stringify(toDoListArray));
 }
 
+function init(){
+  loadToDoList();
+  toDoForm.addEventListener('submit', createToDo);
+}
 
+init();
 
